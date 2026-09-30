@@ -1,16 +1,24 @@
-# Stage 1: Build (Ambiente de construcción)
-FROM node:22-alpine AS build
-
-# Creamos el directorio de trabajo
+# Stage 1: Construcción y Compilación
+FROM node:22-alpine AS builder
 WORKDIR /usr/src/app
 
-# Copiamos archivos de dependencias
 COPY package*.json ./
+RUN npm ci
 
-# Instalamos todas las dependencias (incluyendo las de desarrollo para compilar)
-RUN npm install
-
-# Copiamos el resto del código
 COPY . .
+RUN npm run build
 
-EXPOSE 3000
+# Stage 2: Imagen final ligera para Producción
+FROM node:22-alpine AS production
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+RUN npm ci --only=production
+
+# Copiamos solo el código compilado desde la etapa anterior
+COPY --from=builder /usr/src/app/dist ./dist
+
+ENV PORT=8080
+EXPOSE 8080
+
+CMD ["node", "dist/main"]
