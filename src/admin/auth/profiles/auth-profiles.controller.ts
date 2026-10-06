@@ -45,7 +45,7 @@ export class AuthProfilesController {
   }
 
   @Post('generate')
-  @Roles('ADMIN', 'SUPER_ADMIN')
+  //@Roles('ADMIN', 'SUPER_ADMIN')
   generate() {
     return this.natsService.send('profile-generate', {});
   }
