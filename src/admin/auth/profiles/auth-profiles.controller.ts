@@ -11,25 +11,25 @@ import {
 import { filterCreatableProfiles } from '../users/user-profile-policy';
 
 @Controller('admin/profiles')
-@UseGuards(NatsJwtAuthGuard, AdminRolesGuard)
-@Roles(
-  'ADMIN',
-  'SUPER_ADMIN',
-  'MANAGER_LEAGUE',
-  'MANAGER_TEAM',
-  'ASISTANT_LEAGUE',
-  'ASISTANT_TEAM',
-  'MANAGER_NATIONAL_TEAM',
-  'ASISTANT_NATIONAL_TEAM',
-  'MANAGER_REGIONAL_TEAM',
-  'ASISTANT_REGIONAL_TEAM',
-)
 export class AuthProfilesController {
   constructor(
     @Inject(NATS_SERVICE) private readonly natsService: ClientProxy,
   ) {}
 
   @Get()
+  @UseGuards(NatsJwtAuthGuard, AdminRolesGuard)
+  @Roles(
+    'ADMIN',
+    'SUPER_ADMIN',
+    'MANAGER_LEAGUE',
+    'MANAGER_TEAM',
+    'ASISTANT_LEAGUE',
+    'ASISTANT_TEAM',
+    'MANAGER_NATIONAL_TEAM',
+    'ASISTANT_NATIONAL_TEAM',
+    'MANAGER_REGIONAL_TEAM',
+    'ASISTANT_REGIONAL_TEAM',
+  )
   async list(@Req() req: { user?: GatewayUserAuth }) {
     const profiles = await firstValueFrom(
       this.natsService.send<Array<{ id: string; name: string }>>(
